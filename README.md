@@ -1,2 +1,2 @@
 # Portfolio_Interactive_Systems
-Unity, web
+Interaktyvių sistemų (web, žaidimai, programos) projektų portfolio.
