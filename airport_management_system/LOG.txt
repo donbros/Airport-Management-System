@@ -1,0 +1,5 @@
+index.php zukomentuota sesisjos dalis
+
+nustatymai.php uzkomentuota sulietuvinimo dalis
+
+topic == airport_name
