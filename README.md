@@ -1,2 +1,2 @@
 # Portfolio_Interactive_Systems
-Interaktyvių sistemų (web, žaidimai, programos) projektų portfolio.
+Interaktyvių (web, žaidimai, programos) bei keletos didesnių neinteraktyvių sistemų (animacijos) projektų portfolio.
