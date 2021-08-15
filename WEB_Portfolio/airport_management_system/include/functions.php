@@ -2,61 +2,91 @@
 // funkcijos  include/functions.php
 
 function inisession($arg) {   //valom sesijos kintamuosius
-            if($arg =="full"){
-                $_SESSION['message']="";
-                $_SESSION['user']="";
-				$_SESSION['realname']="";
-				$_SESSION['surname']="";
-	       		$_SESSION['ulevel']=0;
-				$_SESSION['userid']=0;
-				$_SESSION['umail']=0;
-            }			    	 
-		$_SESSION['name_login']="";
-		$_SESSION['pass_login']="";
-		$_SESSION['passn_login']=""; // ar ok ? 
-		$_SESSION['mail_login']="";
-		$_SESSION['realname_login']=""; //naujas
-		$_SESSION['surname_login']=""; //naujas
+        if($arg =="full"){
+            //$_SESSION['message']="";
+            //$_SESSION['user']="";
+			//$_SESSION['realname']="";
+			//$_SESSION['surname']="";
+	       	//$_SESSION['ulevel']=0;
+			//$_SESSION['userid']=0;
+			//$_SESSION['umail']=0;
+        }			    	 
+		// $_SESSION['name_login']="";
+		// $_SESSION['pass_login']="";
+		// $_SESSION['passn_login']=""; // ar ok ? 
+		// $_SESSION['mail_login']="";
+		// $_SESSION['realname_login']=""; //naujas
+		// $_SESSION['surname_login']=""; //naujas
 	
-		$_SESSION['name_error']="";
-      	$_SESSION['pass_error']="";
-		$_SESSION['passn_error']=""; // ar ok ? 
-		$_SESSION['mail_error']=""; 
-		$_SESSION['realname_error']=""; //naujas
-      	$_SESSION['surname_error']=""; //naujas
+		// $_SESSION['name_error']="";
+      	// $_SESSION['pass_error']="";
+		// $_SESSION['passn_error']=""; // ar ok ? 
+		// $_SESSION['mail_error']=""; 
+		// $_SESSION['realname_error']=""; //naujas
+      	// $_SESSION['surname_error']=""; //naujas
 	
-		// reikšmės padaromas iniciacijoje, o po to gal pakeičiamos ? 
-		$_SESSION['rubric_login']=""; 
-		$_SESSION['expiration_date_login'] = date('Y-m-d',strtotime(date("Y-m-d") . "+1 days")); // standartinis, kai tik įjungi toks būna parodomas 
-		$_SESSION['topic_login']=""; 
-		$_SESSION['description_login']=""; 
+		// // reikšmės padaromas iniciacijoje, o po to gal pakeičiamos ? 
+		// $_SESSION['rubric_login']=""; 
+		// $_SESSION['expiration_date_login'] = date('Y-m-d',strtotime(date("Y-m-d") . "+1 days")); // standartinis, kai tik įjungi toks būna parodomas 
+		// $_SESSION['topic_login']=""; 
+		// $_SESSION['description_login']=""; 
 	
-		$_SESSION['rubric_error']=""; 
-		$_SESSION['expiration_date_error']=""; 
-		$_SESSION['topic_error']=""; 
-		$_SESSION['description_error']=""; 
+		// $_SESSION['rubric_error']=""; 
+		// $_SESSION['expiration_date_error']=""; 
+		// $_SESSION['topic_error']=""; 
+		// $_SESSION['description_error']=""; 
+		
+		$_SESSION['Name_login']="";
+		$_SESSION['ID_ISO_login']="";
+		$_SESSION['Location_login']="";
+	
+		$_SESSION['Name_error']="";
+		$_SESSION['ID_ISO_error']="";
+		$_SESSION['Location_error']="";
 		
         }
 
-	function checkdescription ($description){   // Vartotojo vardo sintakse
+	// function checkName ($airname){
+		// if (!$airname || strlen($airname = trim($airname)) == 0) 
+			// {$_SESSION['Name_error']=
+				 // "<font size=\"2\" color=\"#ff0000\">* Neįvėdėte teksto į tekstinį laukelį. </font>";
+			 // "";
+			 // return false;}
+            
+	    // else return true;
+	// }
+
+	// --------------------------------------------------------------
+
+	function checknaming ($description){   // Vartotojo vardo sintakse
 	   if (!$description || strlen($description = trim($description)) == 0) 
-			{$_SESSION['description_error']=
+			{$_SESSION['Name_error']=
 				 "<font size=\"2\" color=\"#ff0000\">* Neįvėdėte teksto į tekstinį laukelį. </font>";
 			 "";
 			 return false;}
             
-	        else return true;
+		else return true;
     }
 		
-	function checktopic ($topic){   // Vartotojo vardo sintakse
-	   if (!$topic || strlen($topic = trim($topic)) == 0) 
-			{$_SESSION['topic_error']=
-				 "<font size=\"2\" color=\"#ff0000\">* Neįvėdėte skelbimo pavadinimo/temos. </font>";
+	function checkISO ($id_iso){   // Vartotojo vardo sintakse
+	   if (!$id_iso || $id_iso == -1) 
+			{$_SESSION['ID_ISO_error']=
+				 "<font size=\"2\" color=\"#ff0000\">* Neįvėdėte šalies. </font>";
 			 "";
 			 return false;}
             
 	        else return true;
     }
+		
+	// function checktopic ($topic){   // Vartotojo vardo sintakse
+	   // if (!$topic || strlen($topic = trim($topic)) == 0) 
+			// {$_SESSION['topic_error']=
+				 // "<font size=\"2\" color=\"#ff0000\">* Neįvėdėte skelbimo pavadinimo/temos. </font>";
+			 // "";
+			 // return false;}
+            
+	        // else return true;
+    // }
     
 	function checkzinute ($message){   // Vartotojo vardo sintakse
 	   if (!$message || strlen($message = trim($message)) == 0) 
@@ -68,7 +98,7 @@ function inisession($arg) {   //valom sesijos kintamuosius
 	        else return true;
 	}
 
-function checkname ($username){   // Vartotojo vardo sintakse
+	function checkname ($username){   // Vartotojo vardo sintakse
 	   if (!$username || strlen($username = trim($username)) == 0) 
 			{$_SESSION['name_error']=
 				 "<font size=\"2\" color=\"#ff0000\">* Neįvestas vartotojo vardas</font>";
@@ -82,8 +112,8 @@ function checkname ($username){   // Vartotojo vardo sintakse
 	        else return true;
    }
     
-// nauja f-ja 
-function checkrealname ($realname){   // Vartotojo vardo sintakse
+	// nauja f-ja 
+	function checkrealname ($realname){   // Vartotojo vardo sintakse
 	   if (!$realname || strlen($realname = trim($realname)) == 0) 
 			{$_SESSION['realname_error']=
 				 "<font size=\"2\" color=\"#ff0000\">* Neįvestas tikras vardas</font>";
@@ -97,8 +127,8 @@ function checkrealname ($realname){   // Vartotojo vardo sintakse
 	        else return true;
    }
 
-// nauja f-ja 
-function checksurname ($surname){   // Vartotojo vardo sintakse
+	// nauja f-ja 
+	function checksurname ($surname){   // Vartotojo vardo sintakse
 	   if (!$surname || strlen($surname = trim($surname)) == 0) 
 			{$_SESSION['surname_error']=
 				 "<font size=\"2\" color=\"#ff0000\">* Neįvesta vartotojo pavardė</font>";
@@ -112,7 +142,7 @@ function checksurname ($surname){   // Vartotojo vardo sintakse
 	        else return true;
    }
 
- function checkpass($pwd,$dbpwd) {     //  slaptazodzio tikrinimas (tik demo: min 4 raides ir/ar skaiciai) ir ar sutampa su DB esanciu
+	function checkpass($pwd,$dbpwd) {     //  slaptazodzio tikrinimas (tik demo: min 4 raides ir/ar skaiciai) ir ar sutampa su DB esanciu
 	   if (!$pwd || strlen($pwd = trim($pwd)) == 0) 
 			{$_SESSION['pass_error']=
 			  "<font size=\"2\" color=\"#ff0000\">* Neįvestas slaptažodis</font>";
@@ -131,7 +161,7 @@ function checksurname ($surname){   // Vartotojo vardo sintakse
             else return true;
    }
 
- function checkdb($username) {  // iesko DB pagal varda, grazina {vardas,slaptazodis,lygis,id} ir nustato name_error
+	function checkdb($username) {  // iesko DB pagal varda, grazina {vardas,slaptazodis,lygis,id} ir nustato name_error
 		 $db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 		 $db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
 		 $sql = "SELECT * FROM " . TBL_USERS. " WHERE username = '$username'";
@@ -149,7 +179,7 @@ function checksurname ($surname){   // Vartotojo vardo sintakse
      return array($uname,$upass,$ulevel,$uid,$umail);
  }
 
-function checkmail($mail) {   // e-mail sintax error checking  
+	function checkmail($mail) {   // e-mail sintax error checking  
 	   if (!$mail || strlen($mail = trim($mail)) == 0) 
 			{$_SESSION['mail_error']=
 				"<font size=\"2\" color=\"#ff0000\">* Neįvestas e-pašto adresas</font>";

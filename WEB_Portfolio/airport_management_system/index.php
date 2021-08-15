@@ -21,15 +21,14 @@ include("include/functions.php");
             <center><img src="include/top.png"></center>
         </td></tr><tr><td> 
 		
-	<?php       
-	// Lentelė rodoma prisijungusiam varotojui
-	
+		<?php       
+		$_SESSION['prev']="index.php"; 
         include("include/meniu.php"); //įterpiamas meniu pagal vartotojo rolę
-	?>
-    <div style="text-align: center; color:blue">
+		?>
+		
+		<div style="text-align: center; color:blue">
         <br><br>
-		<h1>Pradinis sistemos apie oro uosto sistemos valdymo puslapis.</h1>
-    </div><br>
-	
+			<h1>Pradinis sistemos apie oro uosto sistemos valdymo puslapis.</h1>
+		</div><br>
     </body>
 </html>

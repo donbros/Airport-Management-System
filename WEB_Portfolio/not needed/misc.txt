@@ -1,0 +1,57 @@
+foreach ($selection as $selection) {
+    $selected = ($options == $selection) ? "selected" : "";
+    echo '<option '.$selected.' value="'.$selection.'">'.$selection.'</option>';
+}
+
+
+
+
+
+----------------------
+
+//var $phppart = '<?php while($row=mysqli_fetch_array($result_airlines)){ echo "<option value='" . $row['ID'] . "'>" . $row['Name'] . "</option>"; }; ?>';
+												// var result_airlines = "<?php echo $result_airlines; ?>";
+												// var php_part = "tralalala";
+												// var k = 0;
+												// for(k; k < result_airlines; k++) {
+												  // // kaupti reiktu tuos
+												  // php_part = ' ';
+												// }
+												//var php_part = "";
+												
+				
+SENAS KODAS CIA
+
+
+		<script>
+		// $(document).ready(function() {
+		// var max_fields = 10;
+		// var wrapper = $(".container1");
+		// var add_button = $(".add_form_field");
+
+		// var x = 1;
+		// $(add_button).click(function(e) {
+			// e.preventDefault();
+			// if (x < max_fields) {
+				// x++;
+				// $(wrapper).append('<div><input type="text" name="mytext[]"/><a href="#" class="delete">Delete</a></div>'); //add input box
+			// } else {
+				// alert('You Reached the limits')
+			// }
+		// });
+
+		// $(wrapper).on("click", ".delete", function(e) {
+			// e.preventDefault();
+			// $(this).parent('div').remove();
+			// x--;
+		// })
+		// });
+		</script>
+				
+neblogas kodas
+												$('#dynamic_field').append('<tr id="row'+i+'"><td>'+
+												'<select name="name" id="name">'+
+												'<option value="0">-</option>'+
+												mySelect+
+												'</select></td>'+
+												'<td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn_remove">X</button></td></tr>');

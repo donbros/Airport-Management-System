@@ -1,111 +1,116 @@
 <?php
+ob_start();
+?>
+<?php
+
+session_start(); 
+	
+// REIKIA ISSIREIKSTI AVIALINIJAS!
+// Oro uosto pavadinimas: tikrinam ar ivesta; netikrinam vienodumo
+// Šalis: view dalyje turi būti PATEIKTAS iš kurio turėtumėte rinktis šalį; pasirinkus ją, o tiksliau jos kodą, tą kodą perkeliame prie įvestos informacijos;
+// Lokacija: tikrinam ar ivesta; netikrinam vienodumo; turim kažkaip "paimti" informaciją ir ją perkelti į duomenų bazę (kol kas ilguma ir platuma atskirtos, reiktų įkelti kartu su separatorium, turbūt " ");
+// Avialinijos: prisaikdiname atskirame table - viskas ten daroma paieškos forma. Reikia visą tą sarašiuką sumesti į atskirą table ir prisaikdinti tos šalies ID t.y. pirmą mums reikia ją kažkaip gauti. Reiškia pirma ikeliam be nieko ir tada iškart darome paiešką gal;
+
 // procregister.php tikrina registracijos reikšmes
 // įvedimo laukų reikšmes issaugo $_SESSION['xxxx_login'], xxxx-name, pass, mail
 // jei randa klaidų jas sužymi $_SESSION['xxxx_error']
 // jei vardas, slaptažodis ir email tinka, įraso naują vartotoja į DB, nukreipia į index.php
 // po klaidų- vel į register.php 
 
-session_start(); 
-// cia sesijos kontrole
-if (!isset($_SESSION['prev']) || ($_SESSION['prev'] != "operacija2.php" && $_SESSION['prev'] != "register.php"))
-{ 
-	header("Location: logout.php");exit;
-}
+	// cia sesijos kontrole (pasiziureti veliau ar ji reikalinga)
+	// if (!isset($_SESSION['prev']) || ($_SESSION['prev'] != "airlines_registration.php")
+	// { 
+		// header("Location: index.php");exit;
+	// }
 
-$_SESSION['prev'] = "proc_airlines_registration.php";
+	// pažymime kad šitas puslapis yra "buvęs puslapis"
+	$_SESSION['prev'] = "proc_airlines_registration.php";
 
-  include("include/nustatymai.php");
-  include("include/functions.php");
+	include("include/settingsdb.php");
+	include("include/functions.php");
  
-	$_SESSION['rubric_error']=""; 
-	$_SESSION['expiration_date_error']=""; 
-	$_SESSION['airport_name_error']=""; 
-	$_SESSION['description_error']=""; 
-  
-
-  
-	// tas, kuris įkėlinėja skelbimą 
-	$user=$_SESSION['user']; 
+	$_SESSION['ID_ISO_error']=""; 
+	$_SESSION['Name_error']=""; 
 	
-	// galime tikrinimą pagal airport_name daryti, nes vis tiek jį visada įvedinėja 
-	if(isset($_POST['airport_name']))
+	if(isset($_POST['ID_ISO']))
 	{
-		$rubric=$_POST['rubric'];
-		//$_SESSION['name_login']=$user;
-		$expiration_date=$_POST['expiration_date'];//$_SESSION['realname_login']=$realname; // naujas !!!!!!!! 
-		$airport_name=$_POST['airport_name'];//$_SESSION['surname_login']=$surname;     // naujas !!!!!!!! 
-		$description=$_POST['description'];//$_SESSION['realname_login']=$realname; // naujas !!!!!!!! 
+		$ID_ISO=$_POST['ID_ISO'];
+		$Name=$_POST['Name'];
 		
-		$_SESSION['rubric_login']=$_POST['rubric'];  
-		$_SESSION['expiration_date_login']=$_POST['expiration_date']; 
-		$_SESSION['airport_name_login']=$_POST['airport_name']; 
-		$_SESSION['description_login']=$_POST['description']; 
+		$_SESSION['ID_ISO_login']=$_POST['ID_ISO'];  
+		$_SESSION['Name_login']=$_POST['Name'];
 	}
 	else
 	{
-		$rubric=$_SESSION['rubric_login'];
-		$expiration_date=$_SESSION['expiration_date_login'];
-		$airport_name=$_SESSION['airport_name_login'];
-		$description=$_SESSION['description_login']; 
+		$ID_ISO=$_SESSION['ID_ISO_login'];
+		$Name=$_SESSION['Name_login'];
+		$Location=$_SESSION['Location_login']; 
 	}
 	
 	// prisijungiame prie duomenų bazės 
 	$db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 	$db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
 
-	// išsireiškiame TBL_USERS 
-	$sql_users = "SELECT userid,realname,surname,username,userlevel,post,email,timestamp "
-            . "FROM " . TBL_USERS . " ORDER BY realname";
-	$result_users = mysqli_query($db, $sql_users);
-	if (!$result_users || (mysqli_num_rows($result_users) < 1)) 
-		{echo "Klaida skaitant lentelę users"; exit;} 	
+	// pasitikriname ar prisijungta prie duomenų bazės (NEREIKALINGAS)
+	//echo $db ? 'connected; ' : 'not connected; ';
+	
+	// tikriname ar paimami kintamieji
+	//echo 'Įkeltieji duomenys: vardas - ' . $Name . '| ISO - '. $ID_ISO . '| Koordinatės - '  . $Location . "| baigėsi įkeltieji duomenys| ";
+	// tikriname ar sesijos paimami kintamieji
+	//echo $_SESSION['ID_ISO_login'] . '; ' . $_SESSION['Name_login'] . '; ' . $_SESSION['Location_login'];
+	
+	// ********************************************************************
+	// čia prasideda įvestų duomenų manipuliacija, sutvarkyti pagal reikalą
+	// ********************************************************************
+
+	// išsireiškiame TBL_AIRLINES
+	$sql_airlines = "SELECT ID,Name,ID_ISO "
+            . "FROM " . TBL_AIRLINES . " ORDER BY Name";
+	$result_airlines = mysqli_query($db, $sql_airlines);
+	if (!$result_airlines || (mysqli_num_rows($result_airlines) < 1)) 
+		{echo "Klaida skaitant lentelę airlines"; exit;} 	
 		 
-	// inicijuoti kintamieji 
-	$user_found = ''; 
-	$found = false; 
+	// // inicijuoti kintamieji 
+	// $airport_found = ''; 
+	// $found = false; 
 
-	// ieškome userid 
-	$result_users = mysqli_query($db, $sql_users); // restartinam $result_2 
-	while($row_users = mysqli_fetch_assoc($result_users))
-	{
-		if($row_users['username'] == $user)
-		{
-			$found = true; 
-			$user_found = $row_users['userid']; 
-		}
-	}
-
-	$earliest_date = date('Y-m-d',strtotime(date("Y-m-d") . "+1 days")); 
+	// $result_airports = mysqli_query($db, $sql_airports); // restartinam $result_2 
+		// while($row_airports = mysqli_fetch_assoc($result_airports))
+		// {
+			// if($row_airports['Name'] == $airport)
+			// {
+				// $found = true; 
+				// $airport_found = $row_airports['ID']; 
+			// }
+		// }
 
 	// Įkeliame TBL_POSTERS (yra AUTOINCREMENT, tad nereikia rūpintis ID) 
-	// if($found) labiau formalumas, labai retas atvejis, kad jo nerastų duomenų bazėje 
-	if($found)
+	//if(checkTopic($Name) && checkdescription($Location))  
+	if(checknaming($Name) && checkISO($ID_ISO))
 	{
-		// jeigu bent kažkas įrašyta 
-		// if(($airport_name != '') && ($description != '') && ($expiration_date >= $earliest_date))
-		if(checkairport_name($airport_name) && checkdescription($description))  
-		{
 		
-			// įkeliame naują skelbimą 
-			$sql = "INSERT INTO " . TBL_POSTERS. " (rubric, expiration_date, airport_name, description, fk_userid)
-			VALUES ('$rubric', '$expiration_date', '$airport_name', '$description', '$user_found')";
-
-			// Tikriname, ar gerai prireigstruota į duomenų bazę 
-			if (mysqli_query($db, $sql)) 
-				 {$_SESSION['message']="Registracija sėkminga";}
-			else {$_SESSION['message']="DB registracijos klaida:" . $sql . "<br>" . mysqli_error($db);}
-
-			// nuoroda į index.php puslapį 
-			header("Location:index.php");
-			exit; 
+		// įkeliame naują oro uostą (trūksta dar avialinijų užpildymo
+		$sql = "INSERT INTO " . TBL_AIRLINES. " (Name, ID_ISO)
+		VALUES ('$Name', '$ID_ISO')";
+		
+		$last_id = -1;
+		
+		if (mysqli_query($db, $sql))
+		{
+				// last id uzfiksuoja
+				$last_id = mysqli_insert_id($db);
+				// echo "New record created successfully. Last inserted ID is: " . $last_id;
+				$_SESSION['message']="Registracija sėkminga ";
 		}
-		$_SESSION['message']="Yra klaidų duomenų įvedime"; 
+		else {$_SESSION['message']="DB registracijos klaida: " . $sql . "<br>" . mysqli_error($db);}
+		?><?php
+		// nuoroda į index.php puslapį 
+		header("Location:https://registravimosistema.000webhostapp.com/index.php");
+		exit;?><?php
 	}
 	
 	// nuoroda į index.php puslapį 
-	 header("Location:operacija2.php");
-	 exit; 
-
-     ?> 
-  
-  
+	 header("Location:https://registravimosistema.000webhostapp.com/airlines_registration.php");
+	 exit;
+	 ob_end_flush();
+	 ?>
