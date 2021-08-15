@@ -38,6 +38,10 @@ include("include/styles.php");
 	echo "<a href=\"airport_management.php\"><input type=\"button\" value=\"Peržiūrėti ir tvarkyti oro uostus\" class=\"v_menu\" ></a> &nbsp;&nbsp;";
     echo "<a href=\"airlines_registration.php\"><input type=\"button\" value=\"Registruoti avialiniją\" class=\"v_menu\" ></a> &nbsp;&nbsp;";
 	echo "<a href=\"airlines_management.php\"><input type=\"button\" value=\"Peržiūrėti ir tvarkyti avialinijas\" class=\"v_menu\" ></a> &nbsp;&nbsp;";
+	// Papildomos
+	echo "<a href=\"no_airlines_countries_list.php\"><input type=\"button\" value=\"Šalių sąrašas NA\" class=\"v_menu\" ></a> &nbsp;&nbsp;";
+	echo "<a href=\"no_airlines_airports_countries_list.php\"><input type=\"button\" value=\"Šalių sąrašas NAO\" class=\"v_menu\" ></a> &nbsp;&nbsp;";
+	echo "<a href=\"selected_airlines.php\"><input type=\"button\" value=\"Oro uostai į kuriuos skrenda tik pasirinktos šalies avialinijos\" class=\"v_menu\" ></a> &nbsp;&nbsp;";
 
     echo "</td></tr></table>";
 ?>       
