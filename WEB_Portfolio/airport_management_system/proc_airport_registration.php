@@ -102,7 +102,7 @@ ob_start();
 
 	// Įkeliame TBL_POSTERS (yra AUTOINCREMENT, tad nereikia rūpintis ID) 
 	//if(checkTopic($Name) && checkdescription($Location))  
-	if(checknaming($Name) && checkISO($ID_ISO))
+	if(checknaming($Name) && checkISO($ID_ISO) && checkLocation($_POST['lat'], $_POST['lng']) )
 	{
 		
 		// įkeliame naują oro uostą (trūksta dar avialinijų užpildymo

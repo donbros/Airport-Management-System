@@ -10,6 +10,7 @@
 	
 	session_start();
 	?> 
+	
 	<link href="include/styles_extra.css" rel="stylesheet" type="text/css" > 
 	<?php
 	$PREV = $_SESSION['prev']; 
@@ -24,6 +25,11 @@
 	// įtraukiami standartiniai php operaciniai puslapiai
 	include("include/settingsdb.php");
 	include("include/functions.php");
+
+	if(($_SESSION['prev'] != "proc_airport_management.php") && ($_SESSION['prev'] != "proc_airport_management_2.php")) 
+	{
+		$_SESSION['message'] = ""; 
+	}
 
 	// Duomenų bazių paruošimo dalis
 	$db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
@@ -106,18 +112,18 @@
 		</script>	
 	</head>
     <body>
-        <table class="center" ><tr><td>
+        <table class="center" ><tr><td><!-- ok lentele -->
             <center><img src="include/top.png"></center>
 			</td></tr><tr><td><center><font size="5">PASIRINKTO ORO UOSTO REDAGAVIMAS</font></center></td></tr></table> <br>
-		<!-- čia galima padėti formą ir bandyti daryti daugybinimą trynimą --> 
+		<!-- čia galima padėti formą ir bandyti daryti daugybinimą trynimą  style="width:47%; border-width: 2px; border-style: solid; margin-left:auto; margin-right:auto;" --> 
 		
-		<table class="meniu" style="width:47%; border-width: 2px; border-style: solid; margin-left:auto; margin-right:auto;"><tr><td width="50%" >
-
-		   <center> <a href=<?php 
+		<table class="meniu" align="center"><tr><td width="50%" ><!-- ok lentele -->
+			<center>
+		   <a href=<?php 
 		   
 		    echo "airport_management.php";
 		   
-		   ?> ><input type="button" class="v" value="Atgal į pradžią"></a></center> </td> </tr> </table> 
+		   ?> ><input type="button" class="v" value="Atgal į pradžią"></center> </a> </td> </tr> </table> 
 		   
 	<?php
 		$parode=false;   // ar pasirinkti skelbimai 
@@ -156,9 +162,9 @@
 			if ($ifThereIsIDs=(isset($_POST['placiau_'.$ID]))) // vėliau paiminėsime tik vieną ID
 			{ 	
 				?>		
-				<form action="proc_airport_management_2.php" method="POST" class="login" name="add_name" id="add_name" >
-				<table class="center" border="1" cellspacing="0" cellpadding="3">
-				<?php // veiksmą suredaguoti čia ?>
+				<!-- jei irasai class="login" uzsideda dizainas lentelei --> 
+				<form action="proc_airport_management_2.php" method="POST" name="add_name" id="add_name" >
+				<table class="center" border="1" cellspacing="0" cellpadding="3"> <!-- gera lentele -->
 				<?php
 				
 				$parode = true; 
@@ -167,7 +173,7 @@
 				
 				$NameToInsert=explode(" ",$Name); $NameToInsert2=implode("&#160",$NameToInsert); // sutvarkome kad idėtų pilną pavadinimą 
 				echo "<input type=\"hidden\" name=\"ID\" value=".$ID.">";
-				echo "<tr><td><b>Pavadinimas</b></td>   <td><input maxlength=\"32\" type=\"text\" name=\"Name\" value=" . $NameToInsert2. "></td>";
+				echo "<tr><td><b>Pavadinimas</b></td>   <td><input maxlength=\"32\" type=\"text\" name=\"Name\" value=" . $NameToInsert2. ">" . $_SESSION['Name_error'] . "</td>";
 				echo "<tr><td><b>Šalys</b></td><td>";
 				//echo "<select name=\"ID_ISO".$Name."\">";
 				echo "<select name=\"ID_ISO\">";
@@ -196,10 +202,9 @@
 				platuma: <input value= " . $LocationSeparate[0] . " id=\"lat\" name=\"lat\" placeholder=\"platumos koordinatės\"/>		
 				Ilguma: <input value= " . $LocationSeparate[1] . " id=\"lng\" name=\"lng\" placeholder=\"ilgumos koordinates\"/><div/>
 				<input type=\"hidden\" id=\"latMap\" />
-				<input type=\"hidden\" id=\"lngMap\" />
-				";
-				echo $description."
-				</textarea>
+				<input type=\"hidden\" id=\"lngMap\" />";
+				echo $_SESSION['Location_error'];
+				echo "
 				</td>
 				</tr> "; 
 				
@@ -247,7 +252,6 @@
 				echo "<tr><td><b>Oro Linijos</b></td>";
 				?> <td><table class="table table-bordered" id="dynamic_field"> <?php
 						echo "<tr>";
-						//echo "<select name=\"airline[]\" id=\"airline\">";
 						while($row=mysqli_fetch_array($result_airlines))
 						{
 							$emparray[] = $row;
@@ -255,9 +259,8 @@
 								if($airlines_array[$i]==$row['ID'])
 									$airlines_array_aar[] = $row;
 						}; 
-						//echo "</select>";
 				echo "</td>"; ?>
-				<td><button type="button" id="add" class="btn btn-success">Pridėti</td> <?php
+				<td><input type="button" id="add" class="v" value="Pridėti"></td> <?php
 				echo "</tr></table></td></tr>";
 				
 				// --------------- TESTING -----------------
@@ -334,23 +337,23 @@
 						var button_id = $(this).attr("id");
 						$('#row'+button_id+'').remove();
 					});
-					// siuntimo/ikelimo funkcija
-					$('#submit').click(function(){
-						$.ajax({
-						url:"proc_airport_management_2.php",
-						method:"POST",
-						data:$('#add_name').serialize(),
-						success:function(data)
-						{
-							// lentelė print
-							// alert(data);
-							// refreshinu, kad laukeliai suveiktų
-							// čia reik reloado nes palieka senuosius neteisingus duomenis įrašytus matyt dėl session, tai jei nenoriu tvarkyti ju refresh greit stuvarko
-							location.reload();
-							$('#add_name')[0].reset();
-						}
-						});
-					});
+					// siuntimo/ikelimo funkcija (jei atkomentuosim reloadint bus galima ir neiseidinet is puslapio)
+					// $('#submit').click(function(){
+						// $.ajax({
+						// url:"proc_airport_management_2.php",
+						// method:"POST",
+						// data:$('#add_name').serialize(),
+						// success:function(data)
+						// {
+							// // lentelė print
+							// // alert(data);
+							// // refreshinu, kad laukeliai suveiktų
+							// // čia reik reloado nes palieka senuosius neteisingus duomenis įrašytus matyt dėl session, tai jei nenoriu tvarkyti ju refresh greit stuvarko
+							// location.reload();
+							// $('#add_name')[0].reset();
+						// }
+						// });
+					// });
 				});
 				</script>
 				<?php
@@ -361,7 +364,7 @@
 				
 				echo "<tr><td><b>Atnaujinti</b></td>";
 				?>
-				<td><input type="button" name="submit" id="submit" class="v" value="atnaujinti informaciją"></td> 
+				<td><input type="submit" name="submit" id="submit" class="v" value="atnaujinti informaciją"></td> 
 				
 				<?php
 				$i++; 
@@ -462,7 +465,7 @@
 			
 			echo "<tr>";
 			
-			echo "<td>" . $i . "</td>"; 
+			echo "<td>" . $index=$i+1 . "</td>"; 
 			echo "<td>" . $trynimaiName_[$i] . "</td>"; 
 			echo "<td>";
 			// jei netyčia nefetchintu reikia retartinti sita
@@ -503,8 +506,13 @@
   // jei nieko neužymėjai išmes šį pranešimą 
 	if (!$parode && !$trinti) {
 		?>
-		<table class="center" style=" border-width: 2px; border-style: solid; background-color: #FFF7B7"><td style=" background-color: #996633; color: #F8E9FC; border-radius:3px 3px 3px 3px; padding: 5px 11px; display: inline-block; font-size: 12px; margin: 4px 2px; " >Nieko nepasirinkote arba jūsų pasirinktas sąrašas tuščias.</td> </table> 
+		<table class="center" style=" border-width: 2px; border-style: solid; background-color: #FFF7B7"><td style=" background-color: #996633; color: #F8E9FC; border-radius:3px 3px 3px 3px; padding: 5px 11px; display: inline-block; font-size: 12px; margin: 4px 2px; " >
+		Klaida. <?php echo $_SESSION['Name_error'] . $_SESSION['Location_error']; ?>
+		</td> </table> 
 		<?php 
+		// nunulinam kad neliktų to error vėliau
+		 $_SESSION['Name_error']="";
+		 $_SESSION['Location_error']=""; 
 	}
 					
 	// pakeitimus irasysim i sesija 

@@ -51,7 +51,7 @@ $_SESSION['prev']="airlines_registration.php";
         <body>   
                 <table class="center"><tr><td><img src="include/top.png"></td></tr>
 					<tr><td> 
-                        <table class="meniu" style="border-width: 2px;"><tr><td>
+                        <table align="center" class="meniu" style="border-width: 2px;"><tr><td>
                            <a href="index.php"><input type="button" class="v" value="Atgal į Pradžia" > </a></td></tr>
 						</table>   
 							<div align="center">

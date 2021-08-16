@@ -1,4 +1,4 @@
- <?php ob_start(); ?>
+<?php ob_start(); ?>
 	<?php
 	session_start(); 
 	
@@ -37,7 +37,7 @@
 	$db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 	$db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
 	
-	if(checknaming($Name) && checkISO($ID_ISO))
+	if(checknaming($Name) && checkISO($ID_ISO) && checkLocation($_POST['lat'], $_POST['lng']))
 	{
 		
 		// įkeliame naują oro uostą (trūksta dar avialinijų užpildymo
@@ -126,12 +126,17 @@
 		
 		
 		// nuoroda į index.php puslapį 
-		header("Location:index.php");
+		// header("Location:index.php");
+		header('Location: airport_management.php');
 		exit; 
+	}
+	else
+	{
+		echo "klaida";
 	}
 	
 	// nuoroda į index.php puslapį 
-	 header('Location: airport_registration.php');
+	 header('Location: proc_airport_management.php');
 	 exit;
 	 ob_end_flush();
      ?>

@@ -92,7 +92,7 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
         <body>   
                 <table class="center"><tr><td><img src="include/top.png"></td></tr>
 					<tr><td> 
-                        <table class="meniu" style="border-width: 2px;"><tr><td>
+                        <table class="meniu" align="center" style="border-width: 2px;"><tr><td>
                            <a href="index.php"><input type="button" class="v" value="Atgal į Pradžia" > </a></td></tr>
 						</table>   
 							<div align="center">
@@ -100,7 +100,7 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
 									<tr>
 										<td>
 										<form action="proc_airport_registration.php" method="POST" class="login" name="add_name" id="add_name" > <!-- onsubmit="return confirm('Ar tikrai norite įkelti?')" -->             
-													<center style="font-size:18pt;"><b>Oro Uosto Registracija</b></center>
+													<center style="font-size:18pt;"><b>Oro uosto registracija</b></center>
 											
 										<!-- rubric, date, airport_name, description - visi šitie perkeliami į duombazę per proc_airport_registration -->
 										
@@ -130,9 +130,6 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
 										
 										<?php echo $_SESSION['ID_ISO_error']; ?>
 										
-											<!--<option value="Siūlo" <?php //if($_SESSION['rubric_login']=="Siūlo"){echo "selected"; } ?> >Siūlo</option>-->
-											<!--<option value="Ieško" <?php //if($_SESSION['rubric_login']=="Ieško"){echo "selected"; } ?> >Ieško</option>-->
-										
 										</p>
 										
 										<h3 align="left">Lokacija</h3> <!-- <p style="text-align:left;">Lokacija:<br> -->
@@ -143,13 +140,14 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
 											<input type="hidden" id="posY" />
 											<!-- lokacija: šitą reik perkelt į duomenų bazę -->
 											<!-- tas echo session reiskia tiesiog imetima duomenu i ta vieta -->
-											platuma: <input id="lat" name="lat" placeholder="platumos koordinatės"/>
-											Ilguma: <input id="lng" name="lng" placeholder="ilgumos koordinates"/>
+											<input id="lat" name="lat" placeholder="platumos koordinatės"/>
+											<input id="lng" name="lng" placeholder="ilgumos koordinates"/>
 											<?php //$result = $data1 . ' ' . $data2; ?>
 											<div/>
 											<input type="hidden" id="latMap" />
 											<input type="hidden" id="lngMap" />
 										<!-- reiks imesti error type     -->
+										<?php echo $_SESSION['Location_error']; ?>
 										</p>
 										
 										<div class="container"></div>
@@ -171,7 +169,7 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
 																echo "<option value='" . $row['ID'] . "'>" . $row['Name'] . "</option>"; 
 															}; ?> 
 														</select></td>
-														<td><button type="button" name="add" id="add" class="btn btn-success">Pridėti</</td>
+														<td><input type="button" name="add" id="add" class="v" value="Pridėti"></</td>
 													</tr>
 												</table>
 										</div>

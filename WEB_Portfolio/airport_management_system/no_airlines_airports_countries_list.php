@@ -92,7 +92,7 @@ $a=array();
 		
 		if(($haveAirline==false) && ($haveAirport==false))
 		{
-			echo "<td>" . $i . "</td>";
+			echo "<td>" . $index=$i+1 . "</td>";
 			echo "<td>"; 
 			echo $Name. "</td>";
 			

@@ -1,7 +1,7 @@
 <!DOCTYPE html> 
 
 <?php
-// proc_airport_management.php parodoma išsamesnė pasirinktų skelbimų informacija 
+// Description: Spausdinami visi oro uostai. Galima atlikti tam tikrus pakeitimus sąraše
 
 header('Content-Type: text/html; charset=utf-8'); // LIETUVIŲ KALBOS AKTYVAVIMAS 
 
@@ -65,7 +65,6 @@ $a=array();
 		echo $tarpas."</th><th><b>";
 		echo $pazymeti."</b></th></tr>"; 		
 		$tarpas = ""; 
-		// $pazymeti = "pažymėti visus"; 
 		echo "<tr><td>".$tarpas. "</td><td>";  
 		echo $tarpas."</td><td>";
 		echo $tarpas."</td><td>";
@@ -80,9 +79,6 @@ $a=array();
 		<th><b>Avialinijų sąrašas</b></th>
 		<th><b>Redaguojamas įrašas</b></th>
 		<th><b>Trinamas įrašas (-ai)</b></th>  
-		<?php //if(($_SESSION['ulevel'] == $user_roles["Kontrolierius"])||($_SESSION['ulevel'] == $user_roles["Reg_vartotojas"])) { ?>
-		<!-- <td><b>Naikinti</b></td> --> 
-		<?php //} ?> 
 		</tr>
 <?php
 	
@@ -98,22 +94,13 @@ $a=array();
 		$Location=$row_2['Location']; 
 		
 		$result_3 = mysqli_query($db, $sql_airports_airlines_relations); // restartinam $result_3 
-		// while($row_3 = mysqli_fetch_assoc($result_3))
-		// {
-			// if($row_3['userid'] == $row_2['fk_userid'])
-			// {
-				// $poster_owner = $row_3['username']; 
-			// }
-		// }	
-		$airlines_array = array();
-		//$airlines_array[0] = "lol";
 		
+		$airlines_array = array();
 		$k=0;
 		while($row_3 = mysqli_fetch_assoc($result_3))
 		{
 			if($row_3['ID_Airports'] == $ID)
 			{
-				//$airlines_array[$row_3['ID_Airlines'].($i+1)] = $GLOBALS[$row_3['ID_Airlines'].($i+1)];
 				$airlines_array[$k++] = $row_3['ID_Airlines'];
 			}
 		}	
@@ -145,78 +132,43 @@ $a=array();
 		
 		echo "<tr><td>";
 		
-		echo $i. "</td><td>"; 
+		echo $index=$i+1 . "</td><td>"; 
 		echo $Name. "</td><td>";  
 		echo $countryName."</td><td>";
 		echo $Location."</td><td>";
-		// echo json_encode($airlines_name_array)."</td>";
 		echo implode(", ",$airlines_name_array)."</td>";
-		// echo "<input type=\"submit\" value=\"placiau\" name=\"placiau_".$ID."\">"; 
-		//  echo "<input type=\"submit\" name=$ID value=$ID >";
-		
 		$expiration = false; 
-		// if($ID_ISO <= date("Y-m-d"))
-		// {
-			// $expiration = true; 
-			// echo "<td>nebegalioja</td>";
-		// }
-		// else
-		// {
-			// $expiration = false; 
-			// echo "<td>galioja</td>";
-		// }
-		// if((!$expiration) || ($expiration && $_SESSION['ulevel'] == $user_roles["Kontrolierius"]))
-		// {
-			// JEI NORIME SU CHECKBOXAIS!!!!
-			//echo "<td><label class=\"container\"><input type=\"checkbox\" class=\"container\" name=\"placiau_".$ID."\"><span class=\"checkmark\"></span></label></td>"; 
-			// JEI NORIME SU BUTTONAIS
-		    
-			echo "<td><input type=\"submit\" value=\"Redaguoti\" class=\"container\" name=\"placiau_".$ID."\"></td>";
-
-		// }
-		// else 
-			// echo "<td></td>"; 
+		
+		echo "<td><input type=\"submit\" value=\"Redaguoti\" class=\"v\" name=\"placiau_".$ID."\"></td>";
 
 		echo "<td><label class=\"container\"><input type=\"checkbox\" class=\"container\" name=\"naikinti_".$ID."\"><span class=\"checkmark\"></span></label></td>"; 
 		
 		$a[$i]=$ID; 
 		$i++; 
-		//echo "<td></td>";
-		//if(($_SESSION['ulevel'] == $user_roles["Kontrolierius"])||($_SESSION['ulevel'] == $user_roles["Reg_vartotojas"])) 
-		//	echo "<td><input type=\"checkbox\" name=\"naikinti_".$ID."\"></td>";
 	}
 	
- ?> 
- 
- <!-- JavaScript kodukas MULTIPLE CHECKBOXING - gali būti naudingas trynimui su pasirinkimu vėliau --> 
-<script language="JavaScript">
-function toggle(source) {
+	 ?> 
+	 
+	<script language="JavaScript">
+	// skriptas paskritas galybei "pasirinti visus įrašus"
+	function toggle(source) {
 
-	//<?php echo $a; 
-	//print_r("--------"); ?> 
-	
-	var aaa = <?php echo json_encode($a); ?>; 
-	
-	var j;
-	
-	// document.write(aaa); 
-	
-	for (j = 0; j < aaa.length; j++) { 
-		// text += cars[i] + "<br>"; 
-		var naikinti = "naikinti_" + aaa[j]; 
-		checkboxes = document.getElementsByName(naikinti); 
-		for(var i=0, n=checkboxes.length;i<n;i++) {
-			checkboxes[i].checked = source.checked;
-		}
-	} 
-} 
-</script> 
-
- <!-- Užžymėti visus <br/> -->
+		var aaa = <?php echo json_encode($a); ?>; 
 		
+		var j;
+		
+		for (j = 0; j < aaa.length; j++) { 
+			var naikinti = "naikinti_" + aaa[j]; 
+			checkboxes = document.getElementsByName(naikinti); 
+			for(var i=0, n=checkboxes.length;i<n;i++) {
+				checkboxes[i].checked = source.checked;
+			}
+		} 
+	} 
+	</script> 
+
         </table>
         <br> <input type="submit" name="Vykdyti" class=v value="Ištrinti Pažymėtus">
-		<?php // ideja siunciam i ta pacia forma taciau atliekama visai kitas funkcijas?>
         </form>
 		
     </body></html> 

@@ -77,90 +77,23 @@ function inisession($arg) {   //valom sesijos kintamuosius
             
 	        else return true;
     }
-		
-	// function checktopic ($topic){   // Vartotojo vardo sintakse
-	   // if (!$topic || strlen($topic = trim($topic)) == 0) 
-			// {$_SESSION['topic_error']=
-				 // "<font size=\"2\" color=\"#ff0000\">* Neįvėdėte skelbimo pavadinimo/temos. </font>";
-			 // "";
-			 // return false;}
-            
-	        // else return true;
-    // }
-    
-	function checkzinute ($message){   // Vartotojo vardo sintakse
-	   if (!$message || strlen($message = trim($message)) == 0) 
-			{$_SESSION['description_error']=
-				 "<font size=\"2\" color=\"#ff0000\">* Neįvėdėte teksto į tekstinį laukelį. </font>";
-			 "";
+	
+	function checkLocation ($lat, $lng){   // Vartotojo vardo sintakse
+	   if (!$lat || !$lng
+	   || preg_match("/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/", $lat)==false 
+	   || preg_match("/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/", $lng)==false
+	   ) 
+			{$_SESSION['Location_error']=
+				 "<font size=\"2\" color=\"#ff0000\">* Neįvestos koordinatės arba klaidingas jų formatas. </font>";
 			 return false;}
             
-	        else return true;
-	}
-
-	function checkname ($username){   // Vartotojo vardo sintakse
-	   if (!$username || strlen($username = trim($username)) == 0) 
-			{$_SESSION['name_error']=
-				 "<font size=\"2\" color=\"#ff0000\">* Neįvestas vartotojo vardas</font>";
-			 "";
-			 return false;}
-            elseif (!preg_match("/^([0-9a-zA-ZZąčęėįšųūž])*$/", $username))  /* Check if username is not alphanumeric */ 
-			{$_SESSION['name_error']=
-				"<font size=\"2\" color=\"#ff0000\">* Vartotojo vardas gali būti sudarytas<br>
-				&nbsp;&nbsp;tik iš raidžių ir skaičių</font>";
-		     return false;}
-	        else return true;
-   }
-    
-	// nauja f-ja 
-	function checkrealname ($realname){   // Vartotojo vardo sintakse
-	   if (!$realname || strlen($realname = trim($realname)) == 0) 
-			{$_SESSION['realname_error']=
-				 "<font size=\"2\" color=\"#ff0000\">* Neįvestas tikras vardas</font>";
-			 "";
-			 return false;}
-            elseif (!preg_match("/^([0-9a-zA-Ząčęėįšųūž])*$/", $realname))  /* Check if username is not alphanumeric */ 
-			{$_SESSION['realname_error']=
-				"<font size=\"2\" color=\"#ff0000\">* Tikras vardas gali būti sudarytas<br>
-				&nbsp;&nbsp;tik iš raidžių (ir lietuviškų) ir skaičių</font>";
-		     return false;}
-	        else return true;
-   }
-
-	// nauja f-ja 
-	function checksurname ($surname){   // Vartotojo vardo sintakse
-	   if (!$surname || strlen($surname = trim($surname)) == 0) 
-			{$_SESSION['surname_error']=
-				 "<font size=\"2\" color=\"#ff0000\">* Neįvesta vartotojo pavardė</font>";
-			 "";
-			 return false;}
-            elseif (!preg_match("/^([0-9a-zA-Ząčęėįšųūž])*$/", $surname))  /* Check if username is not alphanumeric */ 
-			{$_SESSION['surname_error']=
-				"<font size=\"2\" color=\"#ff0000\">* Vartotojo pavardė gali būti sudaryta<br>
-				&nbsp;&nbsp;tik iš raidžių (ir lietuviškų) ir skaičių</font>";
-		     return false;}
-	        else return true;
-   }
-
-	function checkpass($pwd,$dbpwd) {     //  slaptazodzio tikrinimas (tik demo: min 4 raides ir/ar skaiciai) ir ar sutampa su DB esanciu
-	   if (!$pwd || strlen($pwd = trim($pwd)) == 0) 
-			{$_SESSION['pass_error']=
-			  "<font size=\"2\" color=\"#ff0000\">* Neįvestas slaptažodis</font>";
-			 return false;}
-            elseif (!preg_match("/^([0-9a-zA-Z])*$/", $pwd))  /* Check if $pass is not alphanumeric */ 
-			{$_SESSION['pass_error']="* Čia slaptažodis gali būti sudarytas<br>&nbsp;&nbsp;tik iš raidžių ir skaičių";
-		     return false;}
-            elseif (strlen($pwd)<4)  // per trumpas
-			         {$_SESSION['pass_error']=
-						  "<font size=\"2\" color=\"#ff0000\">* Slaptažodžio ilgis <4 simbolius</font>";
-		              return false;}
-	          elseif ($dbpwd != substr(hash( 'sha256', $pwd ),5,32))
-               {$_SESSION['pass_error']=
-				   "<font size=\"2\" color=\"#ff0000\">* Neteisingas slaptažodis</font>";
-                return false;}
-            else return true;
-   }
-
+	        else 
+			{
+				return true;
+			}
+    }
+	
+	// nenaudojamas
 	function checkdb($username) {  // iesko DB pagal varda, grazina {vardas,slaptazodis,lygis,id} ir nustato name_error
 		 $db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 		 $db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
@@ -178,17 +111,6 @@ function inisession($arg) {   //valom sesijos kintamuosius
            $ulevel=$row["userlevel"]; $uid= $row["userid"]; $umail = $row["email"];}
      return array($uname,$upass,$ulevel,$uid,$umail);
  }
-
-	function checkmail($mail) {   // e-mail sintax error checking  
-	   if (!$mail || strlen($mail = trim($mail)) == 0) 
-			{$_SESSION['mail_error']=
-				"<font size=\"2\" color=\"#ff0000\">* Neįvestas e-pašto adresas</font>";
-			   return false;}
-            elseif (!filter_var($mail, FILTER_VALIDATE_EMAIL)) 
-			      {$_SESSION['mail_error']=
-					   "<font size=\"2\" color=\"#ff0000\">* Neteisingas e-pašto adreso formatas</font>";
-		            return false;}
-	        else return true;
-   }
+	
  ?>
  

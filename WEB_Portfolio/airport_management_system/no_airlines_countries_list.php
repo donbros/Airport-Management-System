@@ -70,7 +70,7 @@ $a=array();
 		
 		if(!$haveAirline)
 		{
-			echo "<td>" . $i . "</td>";
+			echo "<td>" . $index=$i+1 . "</td>";
 			echo "<td>"; 
 			echo $Name. "</td>";
 			

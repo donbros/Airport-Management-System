@@ -50,7 +50,9 @@
 	
 	// Įkeliame TBL_POSTERS (yra AUTOINCREMENT, tad nereikia rūpintis ID) 
 	//if(checkTopic($Name) && checkdescription($Location))  
-	if(checknaming($Name) && checkISO($ID_ISO))
+	if(checknaming($Name)
+	//	&& checkISO($ID_ISO)
+	)
 	{
 		
 		// įkeliame naują oro uostą (trūksta dar avialinijų užpildymo
@@ -84,7 +86,7 @@
 	}
 	
 	// nuoroda į index.php puslapį 
-	 header('Location: airlines_management.php');
+	 header('Location: proc_airlines_management.php');
 	 exit;
 	 ob_end_flush();
      ?>
