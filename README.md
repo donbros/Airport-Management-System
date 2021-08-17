@@ -1,4 +1,4 @@
-# Portfolio_Interactive_Systems
+# Portfolio_Public
 [EN]
 Interactive (eg. web, games, programs) and a few non-interactive systems (eg. animation) projects public portfolio.
 [LT]
