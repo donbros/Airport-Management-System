@@ -1,5 +1,5 @@
 # Portfolio_Public
 [EN]
-Interactive (eg. web, games, programs) and a few non-interactive systems (eg. animation) projects public portfolio.
+Airport Management System written with php.
 [LT]
-Interaktyvių (pvz.: web, žaidimai, programos) bei keletos didesnių neinteraktyvių sistemų (pvz.:animacijos) projektų portfolio.
+Airport Management System written parašyta naudojantis php.
