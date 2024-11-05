@@ -20,7 +20,7 @@ if ($_SESSION['prev'] != "proc_airlines_registration.php") { inisession("part");
 $_SESSION['prev']="airlines_registration.php";
 ?>
 
-<link href="include/styles_extra.css" rel="stylesheet" type="text/css" > 
+<!-- <link href="include/styles_extra.css" rel="stylesheet" type="text/css" > -->
 
     <html>
         <head>  
@@ -31,70 +31,84 @@ $_SESSION['prev']="airlines_registration.php";
 		<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
 
 		<?php
-			$db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
-			$db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
-			
+			include("include/connection.php"); //įterpiamas meniu pagal vartotojo rolę
+ 			
+			// procedūros
 			$sql_airlines = "SELECT ID,Name,ID_ISO "
 					. "FROM " . TBL_AIRLINES . " ORDER BY Name";
-			$result_airlines = mysqli_query($db, $sql_airlines);
-			if (!$result_airlines || (mysqli_num_rows($result_airlines) < 1)) 
-				{echo "Klaida skaitant lentelę airlines"; exit;} 
-			
 			$sql_countries = "SELECT ID_ISO,Name "
 					. "FROM " . TBL_COUNTRIES . " ORDER BY Name";
-			$result_countries = mysqli_query($db, $sql_countries);
-			if (!$result_countries || (mysqli_num_rows($result_countries) < 1)) 
-				{echo "Klaida skaitant lentelę airlines"; exit;} 
+			
+			// MYSQLI variantas
+			// $db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
+			// $db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
+			// $result_airlines = mysqli_query($db, $sql_airlines);
+			// if (!$result_airlines || (mysqli_num_rows($result_airlines) < 1)) 
+				// {echo "Klaida skaitant lentelę airlines"; exit;} 
+			// $result_countries = mysqli_query($db, $sql_countries);
+			// if (!$result_countries || (mysqli_num_rows($result_countries) < 1)) 
+				// {echo "Klaida skaitant lentelę airlines"; exit;} 
 		?>
 		
         </head>
         <body>   
-                <table class="center"><tr><td><img src="include/top.png"></td></tr>
-					<tr><td> 
-                        <table align="center" class="meniu" style="border-width: 2px;"><tr><td>
-                           <a href="index.php"><input type="button" class="v" value="Atgal į Pradžia" > </a></td></tr>
-						</table>   
-							<div align="center">
-								<table> 
-									<tr>
-										<td>
-										<form action="proc_airlines_registration.php" method="POST" class="login" name="add_name" id="add_name" > <!-- onsubmit="return confirm('Ar tikrai norite įkelti?')" -->             
-													<center style="font-size:18pt;"><b>Oro Linijų Registracija</b></center>
-											
-										<!-- rubric, date, airport_name, description - visi šitie perkeliami į duombazę per proc_airlines_registration -->
+			<table class="center"><tr><td><img src="include/top.png"></td></tr>
+				<tr><td> 
+					<table align="center" class="meniu" style="border-width: 2px;"><tr><td>
+					   <a href="index.php"><input type="button" class="v" value="Atgal į Pradžia" > </a></td></tr>
+					</table>   
+					<?php
+					
+						$result_airlines = sqlsrv_query($db, $sql_airlines);
+						if (!$result_airlines || (sqlsrv_num_rows($result_airlines) < 1)) 
+							{echo "Klaida skaitant lentelę airlines\r\n";} 
+						
+						$result_countries = sqlsrv_query($db, $sql_countries);
+						if (!$result_countries || (sqlsrv_num_rows($result_countries) < 1)) 
+							{echo "Klaida skaitant lentelę countries"; exit;} // exit tik į antrą dedame
+						
+					?>
+						<div align="center">
+							<table> 
+								<tr>
+									<td>
+									<form action="proc_airlines_registration.php" method="POST" class="login" name="add_name" id="add_name" > <!-- onsubmit="return confirm('Ar tikrai norite įkelti?')" -->             
+												<center style="font-size:18pt;"><b>Oro Linijų Registracija</b></center>
 										
-										<h3 align="left">Pavadinimas</h3> <!-- <p style="text-align:left;">Oro uosto pavadinimas:<br> -->
-										<!-- tas echo $_session - yra tiesiog imetimas duomenu i ta vieta -->
-										<input class ="s1"  maxlength="32" name="Name" type="text" placeholder="oro linijų pavadinimas" value=""><br>
-										<!-- Parodo atitinkamą error'ą -->
-										<?php echo $_SESSION['Name_error']; ?>
-										</p>
-										
-										<h3 align="left">Šalis</h3> <!-- <p style="text-align:left;">Šalis:<br> -->
-										<!--<input class ="s1" name="rubric" type="text" value="<?php //echo $_SESSION['rubric_login'];  ?>"><br>-->
-										<select name="ID_ISO" >
-											<option value="-1">---</option> 
-											<?php
-											while($row=mysqli_fetch_array($result_countries))
-											{
-												echo "<option value='" . $row['ID_ISO'] . "'>" . $row['Name'] . "</option>"; 
-											}; ?> 
-										</select>
-										
-										<?php echo $_SESSION['ID_ISO_error']; ?>
-										
-										</p>
-										<p style="text-align:left;">
-										<!-- nepalikti šito submit, jei jau jQuery naudojam nes gaunasi dvigubas submitinimas -->
-										<input type="submit" name="submit" id="submit" class="v" value="Įkelti">
-										</p>
-										</form>
-										</td>
-									</tr>
-								</table>
-							</div>
-					</td></tr>
-				</table>           
+									<!-- rubric, date, airport_name, description - visi šitie perkeliami į duombazę per proc_airlines_registration -->
+									
+									<h3 align="left">Pavadinimas</h3> <!-- <p style="text-align:left;">Oro uosto pavadinimas:<br> -->
+									<!-- tas echo $_session - yra tiesiog imetimas duomenu i ta vieta -->
+									<input class ="s1"  maxlength="32" name="Name" type="text" placeholder="oro linijų pavadinimas" value=""><br>
+									<!-- Parodo atitinkamą error'ą -->
+									<?php echo $_SESSION['Name_error']; ?>
+									</p>
+									
+									<h3 align="left">Šalis</h3> <!-- <p style="text-align:left;">Šalis:<br> -->
+									<!--<input class ="s1" name="rubric" type="text" value="<?php //echo $_SESSION['rubric_login'];  ?>"><br>-->
+									<select name="ID_ISO" >
+										<option value="-1">---</option> 
+										<?php
+										while($row=mysqli_fetch_array($result_countries))
+										{
+											echo "<option value='" . $row['ID_ISO'] . "'>" . $row['Name'] . "</option>"; 
+										}; ?> 
+									</select>
+									
+									<?php echo $_SESSION['ID_ISO_error']; ?>
+									
+									</p>
+									<p style="text-align:left;">
+									<!-- nepalikti šito submit, jei jau jQuery naudojam nes gaunasi dvigubas submitinimas -->
+									<input type="submit" name="submit" id="submit" class="v" value="Įkelti">
+									</p>
+									</form>
+									</td>
+								</tr>
+							</table>
+						</div>
+				</td></tr>
+			</table>           
         </body>
     </html>
    

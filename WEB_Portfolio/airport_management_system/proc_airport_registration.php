@@ -64,8 +64,13 @@ ob_start();
 	}
 	
 	// prisijungiame prie duomenų bazės 
-	$db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
-	$db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
+	// $db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME); // MYSQLI
+	
+	// MYSQLI
+	// $db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
+	// $db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
+	// SQLSRV
+	include("include/connection.php");
 
 	// pasitikriname ar prisijungta prie duomenų bazės (NEREIKALINGAS)
 	//echo $db ? 'connected; ' : 'not connected; ';
@@ -82,10 +87,15 @@ ob_start();
 	// išsireiškiame TBL_AIRLINES
 	$sql_airlines = "SELECT ID,Name,ID_ISO "
             . "FROM " . TBL_AIRLINES . " ORDER BY Name";
-	$result_airlines = mysqli_query($db, $sql_airlines);
-	if (!$result_airlines || (mysqli_num_rows($result_airlines) < 1)) 
-		{echo "Klaida skaitant lentelę airlines"; exit;} 	
-		 
+	// $result_airlines = mysqli_query($db, $sql_airlines); // MYSQLI
+	$result_airlines = sqlsrv_query($db, $sql_airlines);
+	if (!$result_airlines 
+		// || (mysqli_num_rows($result_airlines) < 1)
+		 || (sqlsrv_num_rows($result_airlines) < 1)
+		) 
+		{echo "Klaida skaitant lentelę airlines";} 	
+	
+	//echo sqlsrv_get_field($result_airlines, 0); 
 	// // inicijuoti kintamieji 
 	// $airport_found = ''; 
 	// $found = false; 
@@ -99,7 +109,6 @@ ob_start();
 				// $airport_found = $row_airports['ID']; 
 			// }
 		// }
-
 	// Įkeliame TBL_POSTERS (yra AUTOINCREMENT, tad nereikia rūpintis ID) 
 	//if(checkTopic($Name) && checkdescription($Location))  
 	if(checknaming($Name) && checkISO($ID_ISO) && checkLocation($_POST['lat'], $_POST['lng']) )
@@ -107,18 +116,37 @@ ob_start();
 		
 		// įkeliame naują oro uostą (trūksta dar avialinijų užpildymo
 		$sql = "INSERT INTO " . TBL_AIRPORTS. " (Name, ID_ISO, Location)
-		VALUES ('$Name', '$ID_ISO', '$Location')";
+			VALUES ('$Name', '$ID_ISO', '$Location')";
 		
+		echo $sql; // parodo ka ikelineja
 		$last_id = -1;
 		
-		if (mysqli_query($db, $sql))
+		// MYSQLI
+		// if (mysqli_query($db, $sql))
+		// {
+				// // last id uzfiksuoja
+				// $last_id = mysqli_insert_id($db);
+				// // echo "New record created successfully. Last inserted ID is: " . $last_id;
+				// $_SESSION['message']="Registracija sėkminga ";
+		// }
+		// else {$_SESSION['message']="DB registracijos klaida: " . $sql . "<br>" . mysqli_error($db);}
+		
+		// SQLSRV
+		$resource = sqlsrv_query($db, $sql);
+		if ($resource)
 		{
 				// last id uzfiksuoja
-				$last_id = mysqli_insert_id($db);
+				sqlsrv_next_result($resource);
+				sqlsrv_fetch($resource);
+				echo "test1:" , $resource[0]; 
+				echo "test2:" , sqlsrv_get_field($resource, 0); 
+				$last_id = $resource[0]; // NEVEIKIA!!!!!!!!!!!!! sutaisyti
 				// echo "New record created successfully. Last inserted ID is: " . $last_id;
 				$_SESSION['message']="Registracija sėkminga ";
 		}
-		else {$_SESSION['message']="DB registracijos klaida: " . $sql . "<br>" . mysqli_error($db);}
+		else {
+			$_SESSION['message']="DB registracijos klaida: " . $sql . "<br>" . sqlsrv_errors($db);
+		}
 		
 		// šita reikalinga gan, gal netrint
 		echo $_SESSION['message'];
@@ -154,17 +182,33 @@ ob_start();
 				{
 					if(trim($_POST["airline"][$i]) != '')
 					{
+						// !!!!!!!!!!!!!!!! nesutvarkyta!
+						echo "Avialinija ID: ", $_POST["airline"][0]; 
+						// $sql = "INSERT INTO " . TBL_AIRPORTS_AIRLINES_RELATIONS . " (ID_Airports, ID_Airlines)
+						// VALUES ('$last_id', '" . mysqli_real_escape_string($db, $_POST["airline"][$i]) . "')";
 						
 						$sql = "INSERT INTO " . TBL_AIRPORTS_AIRLINES_RELATIONS . " (ID_Airports, ID_Airlines)
-							VALUES ('$last_id', '" . mysqli_real_escape_string($db, $_POST["airline"][$i]) . "')";
+							VALUES ('$last_id', '" . $_POST["airline"][$i] . "')";
 						
 						//VALUES ('$last_id', '$ID_Airlines')";
-						if (mysqli_query($db, $sql))
+						// MYSQLI
+						// if (mysqli_query($db, $sql))
+						// {
+								// $_SESSION['message']="Registracija sėkminga";
+						// }
+						// else {$_SESSION['message']="DB registracijos klaida:" . $sql . "<br>" . mysqli_error($db);}
+						
+						// SQLSRV
+						if (sqlsrv_query($db, $sql))
 						{
 								$_SESSION['message']="Registracija sėkminga";
 						}
-						else {$_SESSION['message']="DB registracijos klaida:" . $sql . "<br>" . mysqli_error($db);}
+						else {$_SESSION['message']="DB registracijos klaida:" . $sql . "<br>" . sqlsrv_errors($db);}
 					}
+				}
+				else
+				{
+					echo "error";
 				}
 			}
 			echo 'Duomenys ką tik įterpti.';
@@ -211,6 +255,10 @@ ob_start();
 		//header("Location:index.php");
 		header('Location: airport_registration.php'); 
 		exit; 
+	}
+	else
+	{
+		echo "error_3245";
 	}
 	//$_SESSION['message']="Yra klaidų duomenų įvedime"; 
 

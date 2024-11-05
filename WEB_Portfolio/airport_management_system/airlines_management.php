@@ -17,22 +17,30 @@ header('Content-Type: text/html; charset=utf-8'); // LIETUVIŲ KALBOS AKTYVAVIMA
         </td></tr><tr><td> 
 			<!--<center><font size="5">Dabar yra tokia registruotų vartotojų lentelė</font></center><br>-->
 		<form name="vartotojai" action="proc_airlines_management.php" method="post"> 
- <?php
-		include("include/meniu.php"); //įterpiamas meniu pagal vartotojo rolę
- 			$db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
-			$db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
-			
+	<?php
+			include("include/connection.php"); 
+ 			include("include/meniu.php"); //įterpiamas meniu pagal vartotojo rolę
+ 			// procedūros
 			$sql_airlines = "SELECT ID,Name,ID_ISO "
 					. "FROM " . TBL_AIRLINES . " ORDER BY Name";
-			$result_4 = mysqli_query($db, $sql_airlines);
-			if (!$result_4 || (mysqli_num_rows($result_4) < 1)) 
-				{echo "Klaida skaitant lentelę airlines"; exit;} 
 			
 			$sql_countries = "SELECT ID_ISO,Name "
-				   . "FROM " . TBL_COUNTRIES . " ORDER BY Name ASC"; 
-			$result_countries = mysqli_query($db, $sql_countries);
-			if (!$result_countries || (mysqli_num_rows($result_countries) < 1)) 
-				{echo "Klaida skaitant lentelę airports"; exit;}				
+				   . "FROM " . TBL_COUNTRIES . " ORDER BY Name ASC";
+			$result_4 = sqlsrv_query($db, $sql_airlines);
+			
+			if (!$result_4 || (sqlsrv_num_rows($result_4) < 1)) 
+				{echo "Klaida skaitant lentelę airlines<br />";} 
+			$result_countries = sqlsrv_query($db, $sql_countries);
+			if (!$result_countries || (sqlsrv_num_rows($result_countries) < 1)) 
+				{echo "Klaida skaitant lentelę airports"; exit;}	   
+			// $db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
+			// $db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
+			// $result_4 = mysqli_query($db, $sql_airlines);
+			// if (!$result_4 || (mysqli_num_rows($result_4) < 1)) 
+				// {echo "Klaida skaitant lentelę airlines"; exit;} 
+			// $result_countries = mysqli_query($db, $sql_countries);
+			// if (!$result_countries || (mysqli_num_rows($result_countries) < 1)) 
+				// {echo "Klaida skaitant lentelę airports"; exit;}				
 				
  ?> 
 		</table>
@@ -59,15 +67,43 @@ header('Content-Type: text/html; charset=utf-8'); // LIETUVIŲ KALBOS AKTYVAVIMA
 <?php
 	
 	$i=0; 
-    while($row_airlines = mysqli_fetch_assoc($result_4)) 
+    
+	// while($row_airlines = mysqli_fetch_assoc($result_4)) 
+	// {	 
+	    // $ID=$row_airlines['ID']; 
+		// $Name=$row_airlines['Name']; 
+		// $ID_ISO=$row_airlines['ID_ISO']; 
+		
+		// $countryName = null;
+		// $result_countries = mysqli_query($db, $sql_countries); // restartinam $result_3 
+		// while($row_countries = mysqli_fetch_assoc($result_countries))
+		// {
+			// if($row_countries['ID_ISO']==$ID_ISO)
+			// {
+				// $countryName = $row_countries['Name'];
+			// }
+		// }
+		
+		// echo "<tr><td>";
+		// echo $index=$i+1 . "</td><td>"; 
+		// echo $Name. "</td><td>";  
+		// echo $countryName."</td>";
+		// echo "<td><input type=\"submit\" value=\"Redaguoti\" class=\"v\" name=\"placiau_".$ID."\"></td>";
+		// echo "<td><label class=\"container\"><input type=\"checkbox\" class=\"container\" name=\"naikinti_".$ID."\"><span class=\"checkmark\"></span></label></td>"; 
+		
+		// $a[$i]=$ID; 
+		// $i++; 
+	// }
+	
+	while($row_airlines = sqlsrv_fetch_assoc($result_4)) 
 	{	 
 	    $ID=$row_airlines['ID']; 
 		$Name=$row_airlines['Name']; 
 		$ID_ISO=$row_airlines['ID_ISO']; 
 		
 		$countryName = null;
-		$result_countries = mysqli_query($db, $sql_countries); // restartinam $result_3 
-		while($row_countries = mysqli_fetch_assoc($result_countries))
+		$result_countries = sqlsrv_query($db, $sql_countries); // restartinam $result_3 
+		while($row_countries = sqlsrv_fetch_assoc($result_countries))
 		{
 			if($row_countries['ID_ISO']==$ID_ISO)
 			{
@@ -84,9 +120,7 @@ header('Content-Type: text/html; charset=utf-8'); // LIETUVIŲ KALBOS AKTYVAVIMA
 		
 		$a[$i]=$ID; 
 		$i++; 
-		
 	}
-	
  ?> 
  
 	 <!-- Script'as skirtas sužymėti viso sąrašo checkbox'us --> 

@@ -20,8 +20,9 @@ $a=array();
         <table class="center" ><tr><td>
             <center><img src="include/top.png"></center>
         
-		
-		<?php include("include/meniu.php"); //įterpiamas meniu pagal vartotojo rolę ?>
+		<?php echo "PHPTest2"; ?> 
+			<?php include("include/connection.php"); //įterpiamas meniu pagal vartotojo rolę ?>
+			<?php include("include/meniu.php"); //įterpiamas meniu pagal vartotojo rolę ?>
 			<?php
  			$db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 			$db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 

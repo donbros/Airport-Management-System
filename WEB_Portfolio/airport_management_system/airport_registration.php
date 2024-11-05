@@ -28,8 +28,14 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
 			
 			
 		<!-- kodas skirtas google maps ir jo žymėjimui atvaizduot -->
-		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
-        <script>
+		<!-- DEPRECATED --> <!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script> -->
+		
+		<!-- Google accounto -->
+		<!-- AIzaSyBKGoRmRdJlIeroG_mS808CJaHEHwijKts -->
+		<!-- AIzaSyB4_ylFgii8c2JmXllkR4AjmJH2L5Hcp2c -->
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVeUikRv9tVLdzv651gUPVAHIhf1EvFJc" type="text/javascript"></script>
+        <!-- <iframe src="https://maps.google.com/maps?q=Tangesir%20Dates%20Products&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed" width=300 height=150 allowfullscreen></iframe> --> 
+		<script>
             var map;
 
             function initialize() {
@@ -67,25 +73,29 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
                 document.getElementById('lng').value = lng.toFixed(4);
             }
             google.maps.event.addDomListener(window, 'load', initialize);
+            //google.maps.event.addDomListener(window, 'load', initialize);
         </script>
 		
 		<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
 		
 		<?php
-			$db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
-			$db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 
-			
+			include("include/connection.php"); //įterpiamas meniu pagal vartotojo rolę
+ 			
 			$sql_airlines = "SELECT ID,Name,ID_ISO "
 					. "FROM " . TBL_AIRLINES . " ORDER BY Name";
-			$result_airlines = mysqli_query($db, $sql_airlines);
-			if (!$result_airlines || (mysqli_num_rows($result_airlines) < 1)) 
-				{echo "Klaida skaitant lentelę airlines"; exit;} 
-			
+					
 			$sql_countries = "SELECT ID_ISO,Name "
 					. "FROM " . TBL_COUNTRIES . " ORDER BY Name";
-			$result_countries = mysqli_query($db, $sql_countries);
-			if (!$result_countries || (mysqli_num_rows($result_countries) < 1)) 
-				{echo "Klaida skaitant lentelę airlines"; exit;} 
+			
+			// MySQLi variantas
+			// $db=mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
+			// $db ->set_charset("utf8"); // LIETUVIŲ KALBOS AKTYVAVIMAS 		
+			// $result_airlines = mysqli_query($db, $sql_airlines);
+			// if (!$result_airlines || (mysqli_num_rows($result_airlines) < 1)) 
+				// {echo "Klaida skaitant lentelę airlines"; exit;} 
+			// $result_countries = mysqli_query($db, $sql_countries);
+			// if (!$result_countries || (mysqli_num_rows($result_countries) < 1)) 
+				// {echo "Klaida skaitant lentelę airlines"; exit;} 
 		?>
 		
         </head>
@@ -95,6 +105,29 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
                         <table class="meniu" align="center" style="border-width: 2px;"><tr><td>
                            <a href="index.php"><input type="button" class="v" value="Atgal į Pradžia" > </a></td></tr>
 						</table>   
+						<?php
+						
+							$result_airlines = sqlsrv_query($db, $sql_airlines);
+							
+							// echo sqlsrv_has_rows($result_airlines);
+							// while ($row = sqlsrv_fetch_array($result_airlines, SQLSRV_FETCH_ASSOC)){
+								// $count = $row["Name"];
+							// }
+							// echo $count;
+							
+							if (!$result_airlines)
+								{echo "Klaida skaitant lentelę airlines<br />";}
+							else if(!sqlsrv_has_rows($result_airlines))
+								{echo "airlines lentelė tuščia<br />";}
+							
+							$result_countries = sqlsrv_query($db, $sql_countries);
+							
+							if (!$result_countries) 
+								{echo "Klaida skaitant lentelę countries"; exit;} 
+							else if (!sqlsrv_has_rows($result_countries))
+								{ echo "countries lentelė tuščia"; exit;} 
+							
+						?>
 							<div align="center">
 								<table> 
 									<tr>
@@ -122,7 +155,8 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
 										<select name="ID_ISO" >
 											<option value="-1">---</option> 
 											<?php
-											while($row=mysqli_fetch_array($result_countries))
+											//while($row=mysqli_fetch_array($result_countries)) // MYSQLI
+											while($row=sqlsrv_fetch_array($result_countries))
 											{
 												echo "<option value='" . $row['ID_ISO'] . "'>" . $row['Name'] . "</option>"; 
 											}; ?> 
@@ -163,7 +197,8 @@ if(($_SESSION['prev'] != "airport_registration.php") && ($_SESSION['prev'] != "p
 														<select name="airline[]" id="airline">
 															<option value="-1">---</option> 
 															<?php
-															while($row=mysqli_fetch_array($result_airlines))
+															//while($row=mysqli_fetch_array($result_airlines)) // MYSQLI
+															while($row=sqlsrv_fetch_array($result_airlines))
 															{
 																$emparray[] = $row;
 																echo "<option value='" . $row['ID'] . "'>" . $row['Name'] . "</option>"; 
